@@ -199,9 +199,13 @@ AIMLAPI_KEY = "feb75b45a9b646f19798a9cd465ac71c"
 MODEL = "google/gemma-3n-e4b-it"
 
 index = faiss.read_index("seusl_index.faiss")
-with open("seusl_chunks.pkl", "rb") as f:
-    chunks = pickle.load(f)
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+try:
+    with open("seusl_chunks.pkl", "rb") as f:
+        chunks = pickle.load(f)
+    embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+except Exception as e:
+    st.error("Embedding model couldn't load. Please ensure the model name is correct.")
+    st.stop()
 
 def search_chunks(query, k=7):
     query_embedding = embedder.encode([query])
